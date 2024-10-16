@@ -1,72 +1,96 @@
-package com.example.myapplication
+package com.example.test1
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.R
 
-@ExperimentalMaterial3Api
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    lateinit var textResult: TextView
+
+    var state: Int = 1
+    var op: Int = 0
+    var op1: Int = 0
+    var op2: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MyApplicationTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("Happy Birthday") },
-                            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-                        )
-                    }
-                ) { innerPadding ->
-                    BirthdayGreeting(
-                        name = "Ngoc Anh",
-                        from = "The Anh",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    )
+        setContentView(R.layout.activity_main)
+
+        textResult = findViewById(R.id.text_result)
+
+        findViewById<Button>(R.id.btn0).setOnClickListener(this)
+        findViewById<Button>(R.id.btn1).setOnClickListener(this)
+        findViewById<Button>(R.id.btn2).setOnClickListener(this)
+        findViewById<Button>(R.id.btn3).setOnClickListener(this)
+        findViewById<Button>(R.id.btn4).setOnClickListener(this)
+        findViewById<Button>(R.id.btn5).setOnClickListener(this)
+        findViewById<Button>(R.id.btn6).setOnClickListener(this)
+        findViewById<Button>(R.id.btn7).setOnClickListener(this)
+        findViewById<Button>(R.id.btn8).setOnClickListener(this)
+        findViewById<Button>(R.id.btn9).setOnClickListener(this)
+
+        findViewById<Button>(R.id.btnAdd).setOnClickListener(this)
+        findViewById<Button>(R.id.btnEqual).setOnClickListener(this)
+        findViewById<Button>(R.id.btnDiv).setOnClickListener(this)
+        findViewById<Button>(R.id.btnSub).setOnClickListener(this)
+    }
+
+    override fun onClick(p0: View?) {
+        val id = p0?.id
+        when (id) {
+            R.id.btn0 -> addDigit(0)
+            R.id.btn1 -> addDigit(1)
+            R.id.btn2 -> addDigit(2)
+            R.id.btn3 -> addDigit(3)
+            R.id.btn4 -> addDigit(4)
+            R.id.btn5 -> addDigit(5)
+            R.id.btn6 -> addDigit(6)
+            R.id.btn7 -> addDigit(7)
+            R.id.btn8 -> addDigit(8)
+            R.id.btn9 -> addDigit(9)
+            R.id.btnAdd -> {
+                op = 1
+                state = 2
+            }
+            R.id.btnSub -> {
+                op = 2
+                state = 2
+            }
+            R.id.btnDiv -> {
+                op = 3
+                state = 2
+            }
+            R.id.btnEqual -> {
+                var result = 0
+                when (op) {
+                    1 -> result = op1 + op2
+                    2 -> result = op1 - op2
+                    3 -> result = if (op2 != 0) op1 / op2 else 0
                 }
+                textResult.text = "$result"
+                resetCalculator()
             }
         }
     }
-}
 
-@Composable
-fun BirthdayGreeting(name: String, from: String, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Happy Birthday, $name!",
-            fontSize = 30.sp,
-
-        )
-        Text(
-            text = "From $from.",
-            fontSize = 24.sp,
-            modifier = Modifier.align(Alignment.End)
-        )
+    private fun addDigit(c: Int) {
+        if (state == 1) {
+            op1 = op1 * 10 + c
+            textResult.text = "$op1"
+        } else {
+            op2 = op2 * 10 + c
+            textResult.text = "$op2"
+        }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun BirthdayGreetingPreview() {
-    MyApplicationTheme {
-        BirthdayGreeting(name = "Sam", from = "Emma")
+    private fun resetCalculator() {
+        state = 1
+        op1 = 0
+        op2 = 0
+        op = 0
     }
 }
